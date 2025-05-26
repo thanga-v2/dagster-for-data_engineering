@@ -1,3 +1,13 @@
 data orchestration for data pieplining.
 
 can be alternative to airflow
+
+dagster
+
+dagster-webserver
+
+polars
+
+
+dagster -> asset centric tool -> @dg.asset
+airflow -> task centric
