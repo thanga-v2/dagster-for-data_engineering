@@ -3,3 +3,7 @@
 .venv
 
 __pycache__/
+
+dagster project scaffold --name car_data
+
+https://raw.githubusercontent.com/Azure/carprice/refs/heads/master/dataset/carprice.csv
