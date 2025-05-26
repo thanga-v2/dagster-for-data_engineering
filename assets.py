@@ -20,4 +20,5 @@ def third(context: dg.AssetExecutionContext):
 
 # dagster definitions  
 # 
-dagsterdefs = dg.Definitions(assets=[simple, second, third])        
+dagsterdefs = dg.Definitions(assets=[simple, second, third])       
+
