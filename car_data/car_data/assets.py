@@ -8,6 +8,9 @@ csv_path = "mydata/carprice.csv"
 # print(pl)
 
 # duckdb
+
+# print(duck)
+
 duckdb_path = "duckdb_data/car_data.duckdb"
 table_name = "avg_price_per_brand"
 
@@ -33,4 +36,32 @@ def test(context: dg.AssetExecutionContext):
     # with open("mydatac/carprice.csv", "r") as f:
     #     print("the csv file is", f)
     context.log.info("Now its the end,")
-    context.log.info("Now try to enter multiple logs")     
+    context.log.info("Now try to enter multiple logs")
+
+ 
+@dg.asset(deps=[car_data_file])
+def avg_price_per_brand(context : dg.AssetExecutionContext):
+    """Computes the average price per brand and stores the data in duckDB as mentioned."""
+    context.log.inf("from the duckDB")
+    df = pl.read_csv(csv_path)
+    df = df.drop_nulls(['price'])
+
+    # compute the average price
+    avg_price = df.group_by("make").agg(
+        pl.col("price").mean().alias('avg_price_per_brand')
+    )
+
+    # store in duckdb by converting into list of tuples.
+    data = [(row["make"],row["avg_price_per_brand"]) for row in avg_price.to_dicts() ]
+
+    with duckdb.connect(duckdb_path) as conn:
+        conn.execute(f"DROP TABLE IF EXISTS {table_name}")
+        conn.execute(f"CREATE TABLE {table_name} (make TEXT, avg_price DOUBLE) ")
+
+        # Insert the Data
+        conn.executemany(f"INSERT INTO {table_name} (make,avg_price) VALUES (? , ?)", data)
+
+
+
+
+
